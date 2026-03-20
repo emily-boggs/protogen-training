@@ -15,29 +15,36 @@
         <div class="cloud cloud-2"></div>
         <div class="cloud cloud-3"></div>
         <div class="cloud cloud-4"></div>
+        <div class="cloud cloud-5"></div>
+        <div class="cloud cloud-6"></div>
+        <div class="cloud cloud-7"></div>
+        <div class="cloud cloud-8"></div>
     </div>
 
     <div class="unified-card">
         <!-- Top Section: Greeting Only -->
         <div class="card-header">
             <h1>Hello Friends!</h1>
-            <p class="subtitle">I'm Emily</p>
+            <p class="subtitle">Welcome to my Protogen AI Playground</p>
         </div>
 
         <!-- Bottom Section: Split Layout -->
         <div class="card-content">
             <!-- Left Column: Image + Description -->
             <div class="content-left">
-                <div class="image-container">
+                <div class="image-container" onclick="handleImageClick()" title="Click me for a secret!">
                     <img src="profile.jpg?v=1" alt="Profile photo">
                 </div>
-                <p class="tagline"><span class="tagline-icon">🤖</span> Exploring Protogen AI</p>
+                <p class="tagline"><span class="tagline-icon">🍕</span> Pizza Programmer</p>
                 <p class="description"><span class="description-icon">✨</span> I'm training and experimenting with Protogen AI models to explore creative applications and push the boundaries of what's possible with AI.</p>
-                <button class="contact-btn" onclick="pizzaRain()">Buy me pizza 🍕</button>
+                <button class="contact-btn" onclick="pizzaRain()" title="Warning: May cause spontaneous coding sessions">
+                    Buy me pizza 🍕
+                    <div class="tooltip">Warning: May cause spontaneous coding sessions</div>
+                </button>
             </div>
 
             <!-- Right Column: Weather -->
-            <div class="content-right">
+            <div class="content-right" title="The weather affects my debugging ability">
                 <div id="weather-widget" class="weather-widget-inner">
                     <div class="weather-header">
                         <h3>Current Weather</h3>
@@ -46,6 +53,7 @@
                         <div class="loading-spinner"></div>
                         <p>Loading weather data...</p>
                     </div>
+                    <div class="tooltip">The weather affects my debugging ability 🌤️</div>
                 </div>
             </div>
         </div>
@@ -78,6 +86,67 @@
                 setTimeout(() => {
                     pizza.remove();
                 }, 3000);
+            }
+        }
+
+        function handleImageClick() {
+            triggerEasterEgg();
+        }
+
+        function triggerEasterEgg() {
+            const messages = [
+                "No calls before 10am!",
+                "Oops I must have zoned out!",
+                "Want to go to starbies?",
+                "Brb, got to turn my crockpot on!"
+            ];
+            
+            const messageIndex = Math.floor(Math.random() * messages.length);
+            const randomMessage = messages[messageIndex];
+            
+            // Different emoji sets for each message
+            const emojiSets = [
+                ['⏰', '🔔', '⛔', '🚫'], // Alarm for 10am
+                ['👀', '😲', '🤨', '😵'],  // Zoned out
+                ['☕', '🍵', '💙', '☕'], // Starbies
+                ['🍲', '⏲️', '🔥', '⏱️']  // Crockpot
+            ];
+            
+            const emojis = emojiSets[messageIndex];
+            
+            // Create confetti emojis
+            for (let i = 0; i < 15; i++) {
+                const emoji = document.createElement('div');
+                emoji.className = 'easter-egg-emoji';
+                emoji.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+                emoji.style.left = Math.random() * 100 + '%';
+                emoji.style.top = Math.random() * 50 + '%';
+                document.body.appendChild(emoji);
+                
+                setTimeout(() => emoji.remove(), 2000);
+            }
+            
+            const showNewMessage = () => {
+                // Create and show message
+                const messageDiv = document.createElement('div');
+                messageDiv.className = 'easter-egg-message';
+                messageDiv.textContent = randomMessage;
+                const imageContainer = document.querySelector('.image-container');
+                imageContainer.appendChild(messageDiv);
+                
+                setTimeout(() => messageDiv.remove(), 3000);
+            };
+            
+            // Check for existing message and fade it out smoothly
+            const existingMessage = document.querySelector('.easter-egg-message');
+            if (existingMessage) {
+                existingMessage.style.animation = 'messagePopOut 0.4s ease-in forwards';
+                setTimeout(() => {
+                    existingMessage.remove();
+                    showNewMessage();
+                }, 400);
+            } else {
+                showNewMessage();
             }
         }
 

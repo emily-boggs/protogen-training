@@ -76,6 +76,42 @@
     }
 }
 
+@keyframes cloudDrift5 {
+    0% {
+        transform: translateX(-180px);
+    }
+    100% {
+        transform: translateX(calc(100vw + 180px));
+    }
+}
+
+@keyframes cloudDrift6 {
+    0% {
+        transform: translateX(-220px);
+    }
+    100% {
+        transform: translateX(calc(100vw + 220px));
+    }
+}
+
+@keyframes cloudDrift7 {
+    0% {
+        transform: translateX(-170px);
+    }
+    100% {
+        transform: translateX(calc(100vw + 170px));
+    }
+}
+
+@keyframes cloudDrift8 {
+    0% {
+        transform: translateX(-240px);
+    }
+    100% {
+        transform: translateX(calc(100vw + 240px));
+    }
+}
+
 @keyframes peacePop {
     0% {
         opacity: 0;
@@ -273,6 +309,30 @@ body {
     animation: cloudDrift4 80s linear infinite 5s;
 }
 
+.cloud-5 {
+    top: 20%;
+    left: -200px;
+    animation: cloudDrift5 70s linear infinite 15s;
+}
+
+.cloud-6 {
+    top: 35%;
+    left: -200px;
+    animation: cloudDrift6 100s linear infinite 25s;
+}
+
+.cloud-7 {
+    top: 55%;
+    left: -200px;
+    animation: cloudDrift7 75s linear infinite 8s;
+}
+
+.cloud-8 {
+    top: 70%;
+    left: -200px;
+    animation: cloudDrift8 95s linear infinite 30s;
+}
+
 .unified-card {
     background: rgba(255, 255, 255, 0.15);
     border: 1px solid rgba(255, 255, 255, 0.3);
@@ -332,6 +392,7 @@ body {
     justify-content: center;
     align-items: center;
     transition: all 0.3s ease;
+    position: relative;
 }
 
 .content-right:hover {
@@ -409,6 +470,44 @@ h1 {
     margin-bottom: 0px;
     display: flex;
     justify-content: center;
+    cursor: pointer;
+    perspective: 1000px;
+    position: relative;
+}
+
+.image-flipper {
+    position: relative;
+    width: 140px;
+    height: 140px;
+    transition: transform 0.6s;
+    transform-style: preserve-3d;
+}
+
+.image-flipper.flipped {
+    transform: rotateY(180deg);
+}
+
+.image-flipper-front,
+.image-flipper-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    border: 3px solid #ffffff;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5), 
+                0 0 30px rgba(26, 122, 122, 0.3);
+}
+
+.image-flipper-back {
+    transform: rotateY(180deg);
+    font-size: 5rem;
+    background: rgba(26, 122, 122, 0.3);
+    backdrop-filter: blur(10px);
+    animation: glowPulse 3s ease-in-out infinite;
 }
 
 img {
@@ -416,9 +515,6 @@ img {
     height: 140px;
     border-radius: 50%;
     object-fit: cover;
-    border: 3px solid #ffffff;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5), 
-                0 0 30px rgba(26, 122, 122, 0.3);
     animation: glowPulse 3s ease-in-out infinite;
     transition: transform 0.3s ease;
 }
@@ -495,6 +591,84 @@ img:hover {
     animation: pizzaExplode 3s ease-out;
     z-index: 1000;
     filter: none;
+}
+
+/* Tooltips */
+.tooltip {
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.9);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    margin-bottom: 8px;
+    z-index: 1001;
+}
+
+/* Easter Egg Elements */
+.easter-egg-emoji {
+    position: fixed;
+    font-size: 2rem;
+    pointer-events: none;
+    z-index: 999;
+    animation: easterEggFloat 2s ease-out forwards;
+}
+
+.easter-egg-message {
+    position: absolute;
+    top: calc(50% - 100px);
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(255, 255, 255, 0.95);
+    color: #000;
+    padding: 20px 30px;
+    border-radius: 15px;
+    font-size: 1.2rem;
+    font-weight: 600;
+    z-index: 999;
+    animation: messagePopIn 0.4s ease-out, messagePopOut 0.4s ease-in 2.6s forwards;
+    box-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+    white-space: nowrap;
+}
+
+@keyframes easterEggFloat {
+    0% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(-100px) rotate(360deg);
+    }
+}
+
+@keyframes messagePopIn {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.5);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+}
+
+@keyframes messagePopOut {
+    from {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+    to {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.5);
+    }
 }
 
 /* Weather Widget Styles */
@@ -715,6 +889,15 @@ img:hover {
         height: 120px;
     }
 
+    .image-flipper {
+        width: 120px;
+        height: 120px;
+    }
+
+    .image-flipper-back {
+        font-size: 4rem;
+    }
+
     .contact-btn {
         font-size: 1.1rem;
         padding: 14px 40px;
@@ -792,6 +975,15 @@ img:hover {
     img {
         width: 100px;
         height: 100px;
+    }
+
+    .image-flipper {
+        width: 100px;
+        height: 100px;
+    }
+
+    .image-flipper-back {
+        font-size: 3rem;
     }
 
     .weather-container {
