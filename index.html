@@ -9,15 +9,47 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="container">
-        <h1>Hello Friends!</h1>
-        <p class="subtitle">I'm Emily</p>
-        <p class="tagline">Exploring Protogen AI</p>
-        <p class="description">I'm training and experimenting with Protogen AI models to explore creative applications and push the boundaries of what's possible with AI.</p>
-        <div class="image-container">
-            <img src="profile.jpg?v=1" alt="Profile photo">
+    <!-- Clouds Background -->
+    <div class="clouds-container">
+        <div class="cloud cloud-1"></div>
+        <div class="cloud cloud-2"></div>
+        <div class="cloud cloud-3"></div>
+        <div class="cloud cloud-4"></div>
+    </div>
+
+    <div class="unified-card">
+        <!-- Top Section: Greeting Only -->
+        <div class="card-header">
+            <h1>Hello Friends!</h1>
+            <p class="subtitle">I'm Emily</p>
         </div>
-        <button class="contact-btn" onclick="pizzaRain()">Buy me pizza 🍕</button>
+
+        <!-- Bottom Section: Split Layout -->
+        <div class="card-content">
+            <!-- Left Column: Image + Description -->
+            <div class="content-left">
+                <div class="image-container">
+                    <img src="profile.jpg?v=1" alt="Profile photo">
+                </div>
+                <p class="tagline"><span class="tagline-icon">🤖</span> Exploring Protogen AI</p>
+                <p class="description"><span class="description-icon">✨</span> I'm training and experimenting with Protogen AI models to explore creative applications and push the boundaries of what's possible with AI.</p>
+                <button class="contact-btn" onclick="pizzaRain()">Buy me pizza 🍕</button>
+            </div>
+
+            <!-- Right Column: Weather -->
+            <div class="content-right">
+                <div id="weather-widget" class="weather-widget-inner">
+                    <div class="weather-header">
+                        <h3>Current Weather</h3>
+                    </div>
+                    <div id="weather-content" class="weather-loading">
+                        <div class="loading-spinner"></div>
+                        <p>Loading weather data...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="peace-sign">✌️</div>
     </div>
 
@@ -48,6 +80,230 @@
                 }, 3000);
             }
         }
+
+        // Step 3: Weather Service Module
+        class WeatherService {
+            constructor() {
+                this.baseURL = 'https://api.open-meteo.com/v1/forecast';
+                this.weatherCodes = {
+                    0: { description: 'Clear sky', icon: '☀️' },
+                    1: { description: 'Mainly clear', icon: '🌤️' },
+                    2: { description: 'Partly cloudy', icon: '⛅' },
+                    3: { description: 'Overcast', icon: '☁️' },
+                    45: { description: 'Fog', icon: '🌫️' },
+                    48: { description: 'Depositing rime fog', icon: '🌫️' },
+                    51: { description: 'Light drizzle', icon: '🌦️' },
+                    53: { description: 'Moderate drizzle', icon: '🌧️' },
+                    55: { description: 'Dense drizzle', icon: '🌧️' },
+                    61: { description: 'Slight rain', icon: '🌧️' },
+                    63: { description: 'Moderate rain', icon: '🌧️' },
+                    65: { description: 'Heavy rain', icon: '⛈️' },
+                    71: { description: 'Slight snow', icon: '🌨️' },
+                    73: { description: 'Moderate snow', icon: '❄️' },
+                    75: { description: 'Heavy snow', icon: '❄️' },
+                    95: { description: 'Thunderstorm', icon: '⛈️' }
+                };
+            }
+
+            async getCurrentWeather(latitude, longitude) {
+                const params = new URLSearchParams({
+                    latitude: latitude,
+                    longitude: longitude,
+                    current_weather: 'true',
+                    temperature_unit: 'fahrenheit',
+                    windspeed_unit: 'mph',
+                    timezone: 'auto'
+                });
+
+                const response = await fetch(`${this.baseURL}?${params}`);
+                
+                if (!response.ok) {
+                    throw new Error(`Weather API error: ${response.status}`);
+                }
+
+                return await response.json();
+            }
+
+            getWeatherDescription(code) {
+                return this.weatherCodes[code] || { 
+                    description: 'Unknown', 
+                    icon: '🌡️' 
+                };
+            }
+        }
+
+        // Step 4: Location Service Module
+        class LocationService {
+            async getCurrentPosition() {
+                return new Promise((resolve, reject) => {
+                    if (!navigator.geolocation) {
+                        reject(new Error('Geolocation is not supported'));
+                        return;
+                    }
+
+                    const options = {
+                        enableHighAccuracy: true,
+                        timeout: 10000,
+                        maximumAge: 300000 // 5 minutes cache
+                    };
+
+                    navigator.geolocation.getCurrentPosition(
+                        resolve,
+                        reject,
+                        options
+                    );
+                });
+            }
+
+            async getCityName(latitude, longitude) {
+                try {
+                    // Using a free reverse geocoding service
+                    const response = await fetch(
+                        `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=en`
+                    );
+                    const data = await response.json();
+                    return data.city || data.locality || 'Unknown Location';
+                } catch (error) {
+                    console.warn('Could not get city name:', error);
+                    return 'Your Location';
+                }
+            }
+        }
+
+        // Step 5: Main Widget Controller
+        class WeatherWidget {
+            constructor() {
+                this.weatherService = new WeatherService();
+                this.locationService = new LocationService();
+                this.container = document.getElementById('weather-content');
+            }
+
+            async init() {
+                try {
+                    this.showLoading();
+                    
+                    // Get user location
+                    const position = await this.locationService.getCurrentPosition();
+                    const { latitude, longitude } = position.coords;
+                    
+                    // Get weather data and city name in parallel
+                    const [weatherData, cityName] = await Promise.all([
+                        this.weatherService.getCurrentWeather(latitude, longitude),
+                        this.locationService.getCityName(latitude, longitude)
+                    ]);
+                    
+                    this.displayWeather(weatherData, cityName);
+                    
+                } catch (error) {
+                    this.showError(error);
+                }
+            }
+
+            showLoading() {
+                this.container.innerHTML = `
+                    <div class="weather-loading">
+                        <div class="loading-spinner"></div>
+                        <p>Loading weather data...</p>
+                    </div>
+                `;
+            }
+
+            displayWeather(data, cityName) {
+                const weather = data.current_weather;
+                const weatherInfo = this.weatherService.getWeatherDescription(weather.weathercode);
+                
+                // Update clouds based on temperature
+                updateCloudsForTemperature(weather.temperature);
+                
+                this.container.innerHTML = `
+                    <div class="weather-display">
+                        <div class="location">
+                            📍 ${cityName}
+                        </div>
+                        <div class="temperature">
+                            ${Math.round(weather.temperature)}°F
+                        </div>
+                        <div class="condition">
+                            <span class="weather-icon">${weatherInfo.icon}</span>
+                            <span class="weather-desc">${weatherInfo.description}</span>
+                        </div>
+                        <div class="details">
+                            <div class="detail-item">
+                                <span class="label">Wind:</span>
+                                <span class="value">${weather.windspeed} mph</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="label">Updated:</span>
+                                <span class="value">${new Date(weather.time).toLocaleTimeString()}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            showError(error) {
+                console.error('Weather widget error:', error);
+                
+                let errorMessage = 'Unable to load weather data';
+                if (error.code === 1) {
+                    errorMessage = 'Location access denied. Please enable location services.';
+                } else if (error.code === 2) {
+                    errorMessage = 'Location unavailable. Please try again.';
+                } else if (error.code === 3) {
+                    errorMessage = 'Location request timed out. Please try again.';
+                }
+
+                this.container.innerHTML = `
+                    <div class="weather-error">
+                        <div class="error-icon">⚠️</div>
+                        <p>${errorMessage}</p>
+                        <button onclick="weatherWidget.init()" class="retry-btn">
+                            Try Again
+                        </button>
+                    </div>
+                `;
+            }
+        }
+
+        // Initialize widget when page loads
+        let weatherWidget;
+        
+        // Update clouds based on temperature
+        function updateCloudsForTemperature(temperature) {
+            const clouds = document.querySelectorAll('.cloud');
+            
+            // Temperature scale: 
+            // Cold (below 32°F) = maximum clouds (opacity 0.5+)
+            // Moderate (32-70°F) = medium clouds (opacity 0.2-0.4)
+            // Hot (above 70°F) = minimal clouds (opacity 0.05-0.2)
+            
+            let opacity;
+            if (temperature < 32) {
+                // Freezing: dense clouds
+                opacity = 0.5;
+            } else if (temperature < 50) {
+                // Cold: moderate clouds
+                opacity = 0.35;
+            } else if (temperature < 70) {
+                // Cool: some clouds
+                opacity = 0.2;
+            } else {
+                // Warm: minimal clouds
+                opacity = 0.08;
+            }
+            
+            clouds.forEach((cloud, index) => {
+                // Add slight variation between clouds
+                const variation = (index * 0.05);
+                cloud.style.opacity = Math.max(0.05, opacity - variation);
+            });
+        }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            weatherWidget = new WeatherWidget();
+            weatherWidget.init();
+        });
     </script>
+    </div>
 </body>
 </html>
