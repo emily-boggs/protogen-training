@@ -199,7 +199,6 @@ body {
     background-size: 400% 400%;
     padding: 20px;
     position: relative;
-    overflow: hidden;
 }
 
 /* Clouds Background */
@@ -494,6 +493,8 @@ img:hover {
     opacity: 1;
     pointer-events: none;
     animation: pizzaExplode 3s ease-out;
+    z-index: 1000;
+    filter: none;
 }
 
 /* Weather Widget Styles */
@@ -730,6 +731,13 @@ img:hover {
 }
 
 @media (max-width: 480px) {
+    body {
+        align-items: flex-start;
+        padding-top: 30px;
+        padding-bottom: 30px;
+        min-height: auto;
+    }
+
     .unified-card {
         max-width: 95vw;
     }
