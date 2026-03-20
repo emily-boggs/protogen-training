@@ -4,15 +4,49 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Welcome</title>
+    <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="container">
-        <h1>Hello Friend</h1>
+        <h1>Hello Friends!</h1>
+        <p class="subtitle">I'm Emily</p>
+        <p class="tagline">Exploring Protogen AI</p>
+        <p class="description">I'm training and experimenting with Protogen AI models to explore creative applications and push the boundaries of what's possible with AI.</p>
         <div class="image-container">
             <img src="profile.jpg?v=1" alt="Profile photo">
         </div>
-        <button class="contact-btn">Contact Me</button>
+        <button class="contact-btn" onclick="pizzaRain()">Buy me pizza 🍕</button>
+        <div class="peace-sign">✌️</div>
     </div>
+
+    <script>
+        function pizzaRain() {
+            const button = document.querySelector('.contact-btn');
+            const rect = button.getBoundingClientRect();
+            const startX = rect.left + rect.width / 2;
+            const startY = rect.top + rect.height / 2;
+            
+            for (let i = 0; i < 20; i++) {
+                const pizza = document.createElement('div');
+                pizza.className = 'pizza-emoji';
+                pizza.textContent = '🍕';
+                pizza.style.left = startX + 'px';
+                pizza.style.top = startY + 'px';
+                
+                const angle = (Math.PI * 2 * i) / 20;
+                const velocity = 5 + Math.random() * 5;
+                pizza.style.setProperty('--vx', Math.cos(angle) * velocity);
+                pizza.style.setProperty('--vy', Math.sin(angle) * velocity);
+                pizza.style.animationDelay = Math.random() * 0.2 + 's';
+                
+                document.body.appendChild(pizza);
+                
+                setTimeout(() => {
+                    pizza.remove();
+                }, 3000);
+            }
+        }
+    </script>
 </body>
 </html>

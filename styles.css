@@ -1,3 +1,91 @@
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes peacePop {
+    0% {
+        opacity: 0;
+        transform: scale(0) translateY(-30px);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.2) translateY(-30px);
+    }
+    100% {
+        opacity: 0;
+        transform: scale(1) translateY(-100px);
+    }
+}
+
+@keyframes gradientShift {
+    0% {
+        background: linear-gradient(135deg, #0d4d4d 0%, #1a7a7a 50%, #0066cc 100%);
+    }
+    50% {
+        background: linear-gradient(45deg, #1a7a7a 0%, #0066cc 50%, #0d4d4d 100%);
+    }
+    100% {
+        background: linear-gradient(135deg, #0d4d4d 0%, #1a7a7a 50%, #0066cc 100%);
+    }
+}
+
+@keyframes pulsingBorder {
+    0%, 100% {
+        box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.5), 0 8px 32px rgba(0, 0, 0, 0.2);
+    }
+    50% {
+        box-shadow: 0 0 0 10px rgba(255, 255, 255, 0), 0 8px 32px rgba(0, 0, 0, 0.2);
+    }
+}
+
+@keyframes floating {
+    0%, 100% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-15px);
+    }
+}
+
+@keyframes ripple {
+    to {
+        transform: scale(4);
+        opacity: 0;
+    }
+}
+
+@keyframes pizzaFall {
+    from {
+        top: -50px;
+        opacity: 1;
+    }
+    to {
+        top: 100vh;
+        opacity: 0;
+    }
+}
+
+@keyframes pizzaExplode {
+    0% {
+        opacity: 1;
+        transform: translate(0, 0) rotate(0deg);
+    }
+    100% {
+        opacity: 0;
+        transform: translate(
+            calc(var(--vx) * 100px), 
+            calc(var(--vy) * 100px + 300px)
+        ) rotate(360deg);
+    }
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -5,26 +93,62 @@
 }
 
 body {
-    background: linear-gradient(135deg, #000000 0%, #001a4d 100%);
+    background: linear-gradient(135deg, #0d4d4d 0%, #1a7a7a 50%, #0066cc 100%);
     min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Raleway', sans-serif;
+    animation: fadeIn 1s ease-in-out, gradientShift 8s ease-in-out infinite;
+    background-size: 400% 400%;
 }
 
 .container {
     text-align: center;
     max-width: 600px;
-    padding: 20px;
+    padding: 100px;
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    animation: fadeIn 1s ease-in-out, floating 4s ease-in-out infinite;
+    position: relative;
 }
 
 h1 {
     color: #ffffff;
     font-size: 3.5rem;
-    margin-bottom: 40px;
+    margin-bottom: 10px;
     font-weight: 300;
     letter-spacing: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.subtitle {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+    font-weight: 400;
+}
+
+.tagline {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 1.1rem;
+    margin-bottom: 20px;
+    font-style: italic;
+    letter-spacing: 0.5px;
+}
+
+.description {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 1rem;
+    margin-bottom: 40px;
+    line-height: 1.6;
+    font-weight: 300;
 }
 
 .image-container {
@@ -41,17 +165,37 @@ img {
 }
 
 .contact-btn {
-    background-color: #ffffff;
+    background-color: rgba(255, 255, 255, 0.9);
     color: #000000;
     padding: 12px 40px;
     font-size: 1.1rem;
     border: none;
-    border-radius: 5px;
+    border-radius: 50px;
     cursor: pointer;
     font-weight: 600;
+    font-family: 'Raleway', sans-serif;
     transition: all 0.3s ease;
     text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: 2px;
+    position: relative;
+    overflow: hidden;
+}
+
+.contact-btn::after {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0;
+}
+
+.contact-btn:hover::after {
+    animation: ripple 0.6s ease-out;
 }
 
 .contact-btn:hover {
@@ -62,4 +206,26 @@ img {
 
 .contact-btn:active {
     transform: translateY(0);
+}
+
+.peace-sign {
+    position: fixed;
+    font-size: 3rem;
+    opacity: 0;
+    pointer-events: none;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.peace-sign.show {
+    animation: peacePop 2s ease-in-out;
+}
+
+.pizza-emoji {
+    position: fixed;
+    font-size: 2.5rem;
+    opacity: 1;
+    pointer-events: none;
+    animation: pizzaExplode 3s ease-out;
 }
